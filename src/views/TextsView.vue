@@ -3,8 +3,13 @@
       <h1>Текст в боте</h1>
       <ul>
         <li v-for="text in texts" :key="text.id" class="text-item">
-          <input v-model="text.text" class="text-input" placeholder="Введите текст" />
-          <button @click="updateText(text.id)">Сохранить</button>
+          <textarea
+            v-model="text.text"
+            class="text-input"
+            placeholder="Введите текст"
+            @keydown="handleKeydown"
+          ></textarea>
+          <button @click="saveText(text.id)">Сохранить</button>
         </li>
       </ul>
     </div>
@@ -32,12 +37,12 @@
           console.error('Error fetching texts:', error);
         }
       },
-      async updateText(id) {
+      async saveText(id) {
         try {
           const textToUpdate = this.texts.find(text => text.id === id);
           
           // Убедитесь, что поле text не пустое
-          if (!textToUpdate || !textToUpdate.text) {
+          if (!textToUpdate || !textToUpdate.text.trim()) {
             alert('Поле текст должно быть заполнено.');
             return;
           }
@@ -62,6 +67,12 @@
             alert('Ошибка при обновлении текста: ' + JSON.stringify(error.response.data));
           }
         }
+      },
+      handleKeydown(event) {
+        // Позволяем пользователю использовать Enter для добавления новой строки
+        if (event.key === 'Enter') {
+          // Здесь можно добавить любую дополнительную логику, если это необходимо
+        }
       }
     }
   };
@@ -82,6 +93,13 @@
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    min-height: 40px; /* Минимальная высота для текстового поля */
+    width: 300px; /* Ширина текстового поля */
+    outline: none; /* Убираем обводку при фокусе */
+  }
+  
+  .text-input:focus {
+    border-color: #28a745; /* Цвет рамки при фокусе */
   }
   
   button {
@@ -96,9 +114,9 @@
   button:hover {
     background-color: #218838;
   }
-
-h1 {
+  
+  h1 {
     text-align: center;
-}
+  }
   </style>
   
