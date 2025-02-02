@@ -3,15 +3,18 @@
       <h1>Текст в боте</h1>
       <ul>
         <li v-for="text in texts" :key="text.id" class="text-item">
-          <textarea
-            v-model="text.text"
+          <div
+            contenteditable="true"
+            v-html="text.text"
             class="text-input"
-            placeholder="Введите текст"
+            @input="updateTextContent(text.id, $event)"
             @keydown="handleKeydown"
-          ></textarea>
+            placeholder="Введите текст"
+          ></div>
           <button @click="saveText(text.id)">Сохранить</button>
         </li>
       </ul>
+      <button @click="makeBold">Сделать жирным</button>
     </div>
   </template>
   
@@ -35,6 +38,12 @@
           this.texts = response.data; // Предполагается, что данные приходят в формате [{ id: 1, text: 'Sample text' }, ...]
         } catch (error) {
           console.error('Error fetching texts:', error);
+        }
+      },
+      updateTextContent(id, event) {
+        const textToUpdate = this.texts.find(text => text.id === id);
+        if (textToUpdate) {
+          textToUpdate.text = event.target.innerHTML; // Обновляем текст при изменении
         }
       },
       async saveText(id) {
@@ -71,52 +80,54 @@
       handleKeydown(event) {
         // Позволяем пользователю использовать Enter для добавления новой строки
         if (event.key === 'Enter') {
-          // Здесь можно добавить любую дополнительную логику, если это необходимо
+          event.preventDefault(); // Предотвращаем стандартное поведение
+          document.execCommand('insertHTML', false, '<br><br>'); // Вставляем перенос строки
         }
+      },
+      makeBold() {
+        document.execCommand('bold'); // Применяем жирный шрифт к выделенному тексту
       }
     }
   };
   </script>
-  
-  <style scoped>
-  .texts-view {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-  }
-  
-  .text-item {
-    margin-bottom: 10px;
-  }
-  
-  .text-input {
-    margin-right: 10px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    min-height: 40px; /* Минимальная высота для текстового поля */
-    width: 300px; /* Ширина текстового поля */
-    outline: none; /* Убираем обводку при фокусе */
-  }
-  
-  .text-input:focus {
-    border-color: #28a745; /* Цвет рамки при фокусе */
-  }
-  
-  button {
-    padding: 5px 10px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #218838;
-  }
-  
-  h1 {
-    text-align: center;
-  }
-  </style>
-  
+<style scoped>
+.texts-view {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.text-item {
+  margin-bottom: 10px;
+}
+
+.text-input {
+  margin-right: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-height: 40px; /* Минимальная высота для текстового поля */
+  width: 300px; /* Ширина текстового поля */
+  outline: none; /* Убираем обводку при фокусе */
+}
+
+.text-input:focus {
+  border-color: #28a745; /* Цвет рамки при фокусе */
+}
+
+button {
+  padding: 5px 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #218838;
+}
+
+h1 {
+  text-align: center;
+}
+</style>
