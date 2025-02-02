@@ -3,15 +3,8 @@
     <h1>Текст в боте</h1>
     <ul>
       <li v-for="text in texts" :key="text.id" class="text-item">
-        <div
-          contenteditable="true"
-          v-html="text.text"
-          class="text-input"
-          @input="updateTextContent(text.id, $event)"
-          @keydown="handleKeydown($event)"
-          placeholder="Введите текст"
-        ></div>
-        <button @click="saveText(text.id)">Сохранить</button>
+        <input v-model="text.text" class="text-input" placeholder="Введите текст" />
+        <button @click="updateText(text.id)">Сохранить</button>
       </li>
     </ul>
   </div>
@@ -39,18 +32,12 @@ export default {
         console.error('Error fetching texts:', error);
       }
     },
-    updateTextContent(id, event) {
-      const textToUpdate = this.texts.find(text => text.id === id);
-      if (textToUpdate) {
-        textToUpdate.text = event.target.innerHTML; // Обновляем текст при изменении
-      }
-    },
-    async saveText(id) {
+    async updateText(id) {
       try {
         const textToUpdate = this.texts.find(text => text.id === id);
         
         // Убедитесь, что поле text не пустое
-        if (!textToUpdate || !textToUpdate.text.trim()) {
+        if (!textToUpdate || !textToUpdate.text) {
           alert('Поле текст должно быть заполнено.');
           return;
         }
@@ -75,13 +62,6 @@ export default {
           alert('Ошибка при обновлении текста: ' + JSON.stringify(error.response.data));
         }
       }
-    },
-    handleKeydown(event) {
-      // Позволяем пользователю использовать Enter для добавления новой строки
-      if (event.key === 'Enter') {
-        event.preventDefault(); // Предотвращаем стандартное поведение
-        document.execCommand('insertHTML', false, '<br><br>'); // Вставляем перенос строки
-      }
     }
   }
 };
@@ -102,13 +82,6 @@ export default {
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  min-height: 40px; /* Минимальная высота для текстового поля */
-  width: 300px; /* Ширина текстового поля */
-  outline: none; /* Убираем обводку при фокусе */
-}
-
-.text-input:focus {
-  border-color: #28a745; /* Цвет рамки при фокусе */
 }
 
 button {
@@ -125,6 +98,6 @@ button:hover {
 }
 
 h1 {
-  text-align: center;
+    text-align: center;
 }
 </style>
