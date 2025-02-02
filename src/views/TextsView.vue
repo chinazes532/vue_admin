@@ -6,8 +6,7 @@
           <textarea 
             v-model="text.text" 
             class="text-input" 
-            placeholder="Введите текст" 
-            @keydown="handleKeydown"
+            placeholder="Введите текст"
           ></textarea>
           <button @click="updateText(text.id)">Сохранить</button>
         </li>
@@ -67,12 +66,6 @@
             alert('Ошибка при обновлении текста: ' + JSON.stringify(error.response.data));
           }
         }
-      },
-      handleKeydown(event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
-          event.preventDefault(); // Предотвращаем перенос строки, если Shift не нажат
-          this.updateText(this.texts.find(text => text.text === event.target.value).id); // Обновляем текст
-        }
       }
     }
   };
@@ -115,4 +108,3 @@
     text-align: center;
   }
   </style>
-  
